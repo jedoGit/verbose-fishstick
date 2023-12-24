@@ -1,5 +1,5 @@
 const express = require("express");
-const feedController = require("../contollers/feed");
+const feedController = require("../controllers/feed");
 const router = express.Router();
 
 //-----------------
