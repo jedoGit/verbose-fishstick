@@ -41,7 +41,7 @@ app.use("/feed", feedRoutes);
 mongoose
   .connect(MONGODB_URI)
   .then((result) => {
-    app.listen(3000);
+    app.listen(8081);
   })
   .catch((err) => {
     console.log(err);
