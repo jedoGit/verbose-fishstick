@@ -1,7 +1,14 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const appConfig = require("./appConfig.json");
 const feedRoutes = require("./routes/feed");
 const app = express();
+
+//-----------------
+// Constants
+//-----------------
+const MONGODB_URI = appConfig.dbUri;
 
 //-----------------
 // Register Parsers
@@ -29,4 +36,13 @@ app.use("/feed", feedRoutes);
 //-----------------
 // Start the server
 //-----------------
-app.listen(8081);
+
+// Connect DB
+mongoose
+  .connect(MONGODB_URI)
+  .then((result) => {
+    app.listen(3000);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
