@@ -1,3 +1,4 @@
+const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -14,6 +15,7 @@ const MONGODB_URI = appConfig.dbUri;
 // Register Parsers
 //-----------------
 app.use(bodyParser.json()); // parse application/json content-type
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 //-----------------
 // CORS Policy for all responses
@@ -34,9 +36,18 @@ app.use((req, res, next) => {
 app.use("/feed", feedRoutes);
 
 //-----------------
+// Register Error handler middleware
+//-----------------
+app.use((error, req, res, next) => {
+  console.log(error);
+  const statusCode = error.statusCode || 500;
+  const message = error.message;
+  res.status(statusCode).json({ message: message });
+});
+
+//-----------------
 // Start the server
 //-----------------
-
 // Connect DB
 mongoose
   .connect(MONGODB_URI)
