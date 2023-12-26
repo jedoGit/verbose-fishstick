@@ -7,20 +7,24 @@ const Post = require("../models/post");
 
 exports.getPosts = (req, res, next) => {
   console.log("GET POSTS");
-  res.status(200).json({
-    posts: [
-      {
-        _id: "1",
-        title: "First Post",
-        content: "This is the first post!",
-        imageUrl: "images/itunesImage.jpg",
-        creator: {
-          name: "Jedo",
-        },
-        createdAt: new Date(),
-      },
-    ],
-  });
+  Post.find()
+    .then((posts) => {
+      if (!posts) {
+        const error = new Error("Could not fetch posts.");
+        statusCode = 404;
+        throw error;
+      }
+      res
+        .status(200)
+        .json({ message: "Posts Fetched Successfully.", posts: posts });
+    })
+    .catch((err) => {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
 };
 
 //-----------------
@@ -57,6 +61,31 @@ exports.createPost = (req, res, next) => {
       });
     })
     .catch((err) => {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+//-----------------
+// Controller: getPost
+//-----------------
+exports.getPost = (req, res, next) => {
+  const postId = req.params.postId;
+  Post.findById(postId)
+    .then((post) => {
+      if (!post) {
+        const error = new Error("Could not find post with ID: " + postId);
+        statusCode = 404;
+        throw error;
+      }
+      res
+        .status(200)
+        .json({ message: "Post Fetched Successfully.", post: post });
+    })
+    .catch((err) => {
+      console.log(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
