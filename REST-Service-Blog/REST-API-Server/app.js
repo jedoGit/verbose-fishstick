@@ -2,6 +2,9 @@ const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+const multer = require("multer");
+const { v4: uuidv4 } = require("uuid");
+const mime = require("mime-types");
 const appConfig = require("./appConfig.json");
 const feedRoutes = require("./routes/feed");
 const app = express();
@@ -12,9 +15,43 @@ const app = express();
 const MONGODB_URI = appConfig.dbUri;
 
 //-----------------
+// Image Filestorage
+//-----------------
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    // cb(null, new Date().toISOString() + "-" + file.originalname);
+    // const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const uniqueSuffix = uuidv4();
+    const mimeType = mime.lookup(file.originalname);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + "." + mime.extension(mimeType)
+    );
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
+//-----------------
 // Register Parsers
 //-----------------
 app.use(bodyParser.json()); // parse application/json content-type
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+);
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 //-----------------
