@@ -9,16 +9,32 @@ const Post = require("../models/post");
 
 exports.getPosts = (req, res, next) => {
   console.log("GET POSTS");
+
+  const currentPage = req.query.page || 1;
+  const perPage = 2;
+  let totalItems;
+
   Post.find()
+    .countDocuments()
+    .then((count) => {
+      totalItems = count;
+
+      return Post.find()
+        .skip((currentPage - 1) * perPage)
+        .limit(perPage);
+    })
     .then((posts) => {
       if (!posts) {
         const error = new Error("Could not fetch posts.");
         statusCode = 404;
         throw error;
       }
-      res
-        .status(200)
-        .json({ message: "Posts Fetched Successfully.", posts: posts });
+
+      res.status(200).json({
+        message: "Posts Fetched Successfully.",
+        posts: posts,
+        totalItems: totalItems,
+      });
     })
     .catch((err) => {
       console.log(err);
