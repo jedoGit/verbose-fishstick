@@ -8,11 +8,11 @@ const { validationResult } = require("express-validator");
 // Mailtrap.io Mailer service
 //-----------------
 const transporter = nodeMailer.createTransport({
-  host: "sandbox.smtp.mailtrap.io",
-  port: 2525,
+  host: appConfig.mailerHost,
+  port: appConfig.mailerPort,
   auth: {
-    user: appConfig.mailtrapIoUser,
-    pass: appConfig.mailtrapIoPass,
+    user: appConfig.mailerUser,
+    pass: appConfig.mailerPass,
   },
 });
 
@@ -32,9 +32,10 @@ exports.signUp = (req, res, next) => {
   const email = req.body.email;
   const name = req.body.name;
   const password = req.body.password;
+  const BCRYPTSALT = 12;
 
   bcrypt
-    .hash(password, 12)
+    .hash(password, BCRYPTSALT)
     .then((hashedPw) => {
       const user = new User({
         email: email,
@@ -45,15 +46,17 @@ exports.signUp = (req, res, next) => {
       return user.save();
     })
     .then((result) => {
-      return transporter.sendMail({
+      return res
+        .status(201)
+        .json({ message: "User Created!", userId: result._id });
+    })
+    .then((result) => {
+      transporter.sendMail({
         to: email,
         from: "testMailer@mailtrap.io",
         subject: "Signup succeeded!",
         html: "<h1>Hello " + name + ", you successfully signed up!</h1>",
       });
-    })
-    .then((result) => {
-      res.status(201).json({ message: "User Created!", userId: result._id });
     })
     .catch((err) => {
       console.log(err);

@@ -11,11 +11,6 @@ const authRoutes = require("./routes/auth");
 const app = express();
 
 //-----------------
-// Constants
-//-----------------
-const MONGODB_URI = appConfig.dbUri;
-
-//-----------------
 // Image Filestorage
 //-----------------
 const fileStorage = multer.diskStorage({
@@ -90,7 +85,7 @@ app.use((error, req, res, next) => {
 //-----------------
 // Connect DB
 mongoose
-  .connect(MONGODB_URI)
+  .connect(appConfig.dbUri)
   .then((result) => {
     app.listen(8081);
   })
