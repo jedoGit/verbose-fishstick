@@ -2,7 +2,7 @@
 
 This project is a simple REST-API client and server. The front-end is a borrowed project `(author is Maximillian)` and is written in `ReactJs`. The back-end is a `NodeJs` project using the `ExpressJs` framework.
 
-## Setup the REST-API_Server
+## Setup the REST-API-Server
 
 > [!IMPORTANT]
 >
@@ -22,9 +22,11 @@ This project is a simple REST-API client and server. The front-end is a borrowed
 > ```
 
 ## Start the REST-API-Server
+
 1. Open a terminal and navigate to the `REST-API-Server` directory.
-  - Type `npm install`
-  - Type `npm start`
+
+- Type `npm install`
+- Type `npm start`
 
 > [!NOTE]
 >
@@ -43,16 +45,16 @@ This project is a simple REST-API client and server. The front-end is a borrowed
 >   })
 >   .catch((err) => {
 >     console.log(err);
->   }); 
+>   });
 > ```
 
 ## Start the REST-API-Client
+
 1. Open a terminal and navigate to the `REST-API-Client` directory.
-  - Type `npm install`
-  - Type `npm start`
+
+- Type `npm install`
+- Type `npm start`
 
 > [!NOTE]
 >
 > ReactJs will make the front-end available in `http://localhost:3000`.
->
-
