@@ -1,10 +1,18 @@
 const jwt = require("jsonwebtoken");
+const log4jsLogger = require("../middleware/logger");
 const appConfig = require("../appConfig.json");
+
+//-----------------
+// Logger
+//-----------------
+const logger = log4jsLogger.default;
 
 module.exports = (req, res, next) => {
   const authHeader = req.get("Authorization");
   if (!authHeader) {
-    const error = new Error("Not Authenticated.");
+    const error = new Error(
+      "Missing Authorization Header from received request."
+    );
     error.statusCode = 401;
     throw error;
   }
@@ -18,10 +26,13 @@ module.exports = (req, res, next) => {
     throw err;
   }
   if (!decodedToken) {
-    const error = new Error("Not Authenticated.");
+    const error = new Error("Error with decoded user token.");
     error.statusCode = 401;
     throw error;
   }
+
+  logger.info("USER TOKEN DECODED");
+
   req.userId = decodedToken.userId;
   next();
 };
