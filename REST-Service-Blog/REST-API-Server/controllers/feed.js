@@ -25,6 +25,7 @@ exports.getPosts = (req, res, next) => {
       totalItems = count;
 
       return Post.find()
+        .populate("creator")
         .skip((currentPage - 1) * perPage)
         .limit(perPage);
     })
@@ -75,38 +76,32 @@ exports.createPost = (req, res, next) => {
   const content = req.body.content;
 
   let creator;
-  let post;
 
-  User.findById(req.userId)
-    .then((user) => {
-      if (!user) {
-        const error = new Error("Could not find user.");
-        statusCode = 404;
-        throw error;
-      }
+  // Create post in db
+  const post = new Post({
+    title: title,
+    content: content,
+    imageUrl: imageUrl,
+    creator: req.userId,
+  });
 
-      creator = user;
-
-      // Create post in db
-      const post = new Post({
-        title: title,
-        content: content,
-        imageUrl: imageUrl,
-        creator: { _id: req.userId, name: user.name },
-      });
-
-      return post.save();
+  post
+    .save()
+    .then((result) => {
+      return User.findById(req.userId);
     })
-    .then((savedPost) => {
-      post = savedPost;
-      creator.posts.push(post);
-      return creator.save();
+    .then((user) => {
+      creator = user;
+      user.posts.push(post);
+
+      return user.save();
     })
     .then((result) => {
-      logger.info("POST CREATED");
+      logger.info("USER POST CREATED");
       res.status(201).json({
         message: "Post Created Successfully!",
         post: post,
+        creator: { _id: creator._id, name: creator.name },
       });
     })
     .catch((err) => {
@@ -183,7 +178,7 @@ exports.updatePost = (req, res, next) => {
         throw error;
       }
 
-      if (post.creator._id.toString() !== req.userId) {
+      if (post.creator.toString() !== req.userId) {
         const error = new Error("Not Authorized To Update Post.");
         statusCode = 403;
         throw error;
@@ -229,7 +224,7 @@ exports.deletePost = (req, res, next) => {
         throw error;
       }
 
-      if (post.creator._id.toString() !== req.userId) {
+      if (post.creator.toString() !== req.userId) {
         const error = new Error("Not Authorized To Delete Post.");
         statusCode = 403;
         throw error;
