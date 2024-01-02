@@ -1,6 +1,7 @@
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
+const log4jsLogger = require("./middleware/logger");
 const mongoose = require("mongoose");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
@@ -9,6 +10,12 @@ const appConfig = require("./appConfig.json");
 const feedRoutes = require("./routes/feed");
 const authRoutes = require("./routes/auth");
 const app = express();
+
+//-----------------
+// Register Logger
+//-----------------
+app.use(log4jsLogger.express);
+const logger = log4jsLogger.default;
 
 //-----------------
 // Image Filestorage
@@ -73,7 +80,7 @@ app.use("/auth", authRoutes);
 // Register Error handler middleware
 //-----------------
 app.use((error, req, res, next) => {
-  console.log(error);
+  logger.error(error);
   const statusCode = error.statusCode || 500;
   const message = error.message;
   const data = error.data;
@@ -87,9 +94,9 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(appConfig.dbUri)
   .then((result) => {
-    console.log("APP STARTED");
+    logger.info("APP STARTED");
     app.listen(8081);
   })
   .catch((err) => {
-    console.log(err);
+    logger.error(err);
   });

@@ -2,8 +2,14 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodeMailer = require("nodemailer");
+const log4jsLogger = require("../middleware/logger");
 const appConfig = require("../appConfig.json");
 const { validationResult } = require("express-validator");
+
+//-----------------
+// Logger
+//-----------------
+const logger = log4jsLogger.default;
 
 //-----------------
 // Mailtrap.io Mailer service
@@ -47,12 +53,13 @@ exports.signUp = (req, res, next) => {
       return user.save();
     })
     .then((result) => {
-      console.log("USER SIGNUP");
+      logger.info("USER SIGN UP COMPLETE");
       return res
         .status(201)
         .json({ message: "User Created!", userId: result._id });
     })
     .then((result) => {
+      logger.info("USER SIGN UP EMAIL SENT");
       transporter.sendMail({
         to: email,
         from: "testMailer@mailtrap.io",
@@ -61,7 +68,7 @@ exports.signUp = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -106,12 +113,12 @@ exports.login = (req, res, next) => {
         { expiresIn: appConfig.jwtTokenExpire }
       );
 
-      console.log("USER LOGIN");
+      logger.info("USER LOGGED IN");
 
       res.status(200).json({ token: token, userId: loadedUser._id.toString() });
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -131,12 +138,12 @@ exports.getUserStatus = (req, res, next) => {
         throw error;
       }
 
-      console.log("GET USER STATUS");
+      logger.info("USER STATUS FETCHED");
 
       res.status(200).json({ status: user.status });
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -162,11 +169,12 @@ exports.updateUserStatus = (req, res, next) => {
       user.save();
     })
     .then((result) => {
-      console.log("UPDATE USER STATUS");
+      logger.info("USER STATUS UPDATED");
+
       res.status(200).json({ message: "User Status Updated." });
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }

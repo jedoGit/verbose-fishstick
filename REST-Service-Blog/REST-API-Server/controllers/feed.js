@@ -1,8 +1,14 @@
 const fs = require("fs");
 const path = require("path");
+const log4jsLogger = require("../middleware/logger");
 const { validationResult } = require("express-validator");
 const Post = require("../models/post");
 const User = require("../models/user");
+
+//-----------------
+// Logger
+//-----------------
+const logger = log4jsLogger.default;
 
 //-----------------
 // Controller: getPosts
@@ -29,7 +35,7 @@ exports.getPosts = (req, res, next) => {
         throw error;
       }
 
-      console.log("GET POSTS");
+      logger.info("POSTS FETCHED");
 
       res.status(200).json({
         message: "Posts Fetched Successfully.",
@@ -38,7 +44,7 @@ exports.getPosts = (req, res, next) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -97,13 +103,14 @@ exports.createPost = (req, res, next) => {
       return creator.save();
     })
     .then((result) => {
-      console.log("CREATE POST");
+      logger.info("POST CREATED");
       res.status(201).json({
         message: "Post Created Successfully!",
         post: post,
       });
     })
     .catch((err) => {
+      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -125,14 +132,14 @@ exports.getPost = (req, res, next) => {
         throw error;
       }
 
-      console.log("GET POST");
+      logger.info("POST FETCHED");
 
       res
         .status(200)
         .json({ message: "Post Fetched Successfully.", post: post });
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -177,7 +184,7 @@ exports.updatePost = (req, res, next) => {
       }
 
       if (post.creator._id.toString() !== req.userId) {
-        const error = new Error("Not Authorized.");
+        const error = new Error("Not Authorized To Update Post.");
         statusCode = 403;
         throw error;
       }
@@ -194,13 +201,13 @@ exports.updatePost = (req, res, next) => {
       return post.save();
     })
     .then((result) => {
-      console.log("UPDATE POST");
+      logger.info("POST UPDATED");
       res
         .status(200)
         .json({ message: "Post Updated Successfully.", post: result });
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -223,7 +230,7 @@ exports.deletePost = (req, res, next) => {
       }
 
       if (post.creator._id.toString() !== req.userId) {
-        const error = new Error("Not Authorized.");
+        const error = new Error("Not Authorized To Delete Post.");
         statusCode = 403;
         throw error;
       }
@@ -241,12 +248,12 @@ exports.deletePost = (req, res, next) => {
       return user.save();
     })
     .then((result) => {
-      console.log("DELETE POST");
+      logger.info("POST DELETED");
 
       res.status(200).json({ message: "Post Deleted Successfully." });
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -267,7 +274,7 @@ const clearImage = (filePath) => {
   filePath = path.join(__dirname, "..", filePath).replace("\\", "/");
   fs.unlink(filePath, (err) => {
     if (!Object.is(err, null)) {
-      console.log("clearImage Error: " + err);
+      logger.error("clearImage Error: " + err);
     }
   });
 };
