@@ -87,6 +87,7 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(appConfig.dbUri)
   .then((result) => {
+    console.log("APP STARTED");
     app.listen(8081);
   })
   .catch((err) => {

@@ -118,3 +118,58 @@ exports.login = (req, res, next) => {
       next(err);
     });
 };
+
+//-----------------
+// Controller: getUserStatus
+//-----------------
+exports.getUserStatus = (req, res, next) => {
+  User.findById(req.userId)
+    .then((user) => {
+      if (!user) {
+        const error = new Error("Could not find user.");
+        statusCode = 404;
+        throw error;
+      }
+
+      console.log("GET USER STATUS");
+
+      res.status(200).json({ status: user.status });
+    })
+    .catch((err) => {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};
+
+//-----------------
+// Controller: updateUserStatus
+//-----------------
+exports.updateUserStatus = (req, res, next) => {
+  const newStatus = req.body.status;
+  User.findById(req.userId)
+    .then((user) => {
+      if (!user) {
+        const error = new Error("Could not find user.");
+        statusCode = 404;
+        throw error;
+      }
+
+      user.status = newStatus;
+
+      user.save();
+    })
+    .then((result) => {
+      console.log("UPDATE USER STATUS");
+      res.status(200).json({ message: "User Status Updated." });
+    })
+    .catch((err) => {
+      console.log(err);
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
+};

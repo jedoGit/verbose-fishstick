@@ -9,8 +9,6 @@ const User = require("../models/user");
 //-----------------
 
 exports.getPosts = (req, res, next) => {
-  console.log("GET POSTS");
-
   const currentPage = req.query.page || 1;
   const perPage = 2;
   let totalItems;
@@ -30,6 +28,8 @@ exports.getPosts = (req, res, next) => {
         statusCode = 404;
         throw error;
       }
+
+      console.log("GET POSTS");
 
       res.status(200).json({
         message: "Posts Fetched Successfully.",
@@ -97,6 +97,7 @@ exports.createPost = (req, res, next) => {
       return creator.save();
     })
     .then((result) => {
+      console.log("CREATE POST");
       res.status(201).json({
         message: "Post Created Successfully!",
         post: post,
@@ -116,8 +117,6 @@ exports.createPost = (req, res, next) => {
 exports.getPost = (req, res, next) => {
   const postId = req.params.postId;
 
-  console.log("GET POST");
-
   Post.findById(postId)
     .then((post) => {
       if (!post) {
@@ -125,6 +124,9 @@ exports.getPost = (req, res, next) => {
         statusCode = 404;
         throw error;
       }
+
+      console.log("GET POST");
+
       res
         .status(200)
         .json({ message: "Post Fetched Successfully.", post: post });
@@ -166,8 +168,6 @@ exports.updatePost = (req, res, next) => {
     throw error;
   }
 
-  console.log("UPDATE POST");
-
   Post.findById(postId)
     .then((post) => {
       if (!post) {
@@ -194,6 +194,7 @@ exports.updatePost = (req, res, next) => {
       return post.save();
     })
     .then((result) => {
+      console.log("UPDATE POST");
       res
         .status(200)
         .json({ message: "Post Updated Successfully.", post: result });
@@ -212,8 +213,6 @@ exports.updatePost = (req, res, next) => {
 //-----------------
 exports.deletePost = (req, res, next) => {
   const postId = req.params.postId;
-
-  console.log("DELETE POST");
 
   Post.findById(postId)
     .then((post) => {
@@ -242,6 +241,8 @@ exports.deletePost = (req, res, next) => {
       return user.save();
     })
     .then((result) => {
+      console.log("DELETE POST");
+
       res.status(200).json({ message: "Post Deleted Successfully." });
     })
     .catch((err) => {
