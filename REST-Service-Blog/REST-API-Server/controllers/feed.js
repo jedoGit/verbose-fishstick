@@ -170,6 +170,8 @@ exports.updatePost = (req, res, next) => {
     throw error;
   }
 
+  let updatedPost;
+
   Post.findById(postId)
     .then((post) => {
       if (!post) {
@@ -196,10 +198,18 @@ exports.updatePost = (req, res, next) => {
       return post.save();
     })
     .then((result) => {
+      updatedPost = result;
+
+      return User.findById(req.userId);
+    })
+    .then((user) => {
       logger.info("POST UPDATED");
-      res
-        .status(200)
-        .json({ message: "Post Updated Successfully.", post: result });
+
+      res.status(200).json({
+        message: "Post Updated Successfully.",
+        post: updatedPost,
+        creator: { _id: updatedPost.creator, name: user.name },
+      });
     })
     .catch((err) => {
       logger.error(err);

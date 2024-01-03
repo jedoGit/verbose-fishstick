@@ -9,6 +9,7 @@ const logger = log4jsLogger.default;
 
 module.exports = (req, res, next) => {
   const authHeader = req.get("Authorization");
+
   if (!authHeader) {
     const error = new Error(
       "Missing Authorization Header from received request."
@@ -16,7 +17,9 @@ module.exports = (req, res, next) => {
     error.statusCode = 401;
     throw error;
   }
+
   const token = authHeader.split(" ")[1];
+
   let decodedToken;
 
   try {
