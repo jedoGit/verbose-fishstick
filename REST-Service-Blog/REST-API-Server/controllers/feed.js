@@ -101,8 +101,10 @@ exports.createPost = (req, res, next) => {
       logger.info("USER POST CREATED");
       res.status(201).json({
         message: "Post Created Successfully!",
-        post: post,
-        creator: { _id: creator._id, name: creator.name },
+        post: {
+          ...post._doc,
+          creator: { _id: req.userId, name: creator.name },
+        },
       });
     })
     .catch((err) => {
@@ -208,8 +210,10 @@ exports.updatePost = (req, res, next) => {
 
       res.status(200).json({
         message: "Post Updated Successfully.",
-        post: updatedPost,
-        creator: { _id: updatedPost.creator, name: user.name },
+        post: {
+          ...updatedPost._doc,
+          creator: { _id: req.userId, name: user.name },
+        },
       });
     })
     .catch((err) => {

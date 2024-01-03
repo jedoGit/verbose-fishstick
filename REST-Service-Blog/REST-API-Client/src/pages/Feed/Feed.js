@@ -163,7 +163,7 @@ class Feed extends Component {
           _id: resData.post._id,
           title: resData.post.title,
           content: resData.post.content,
-          creator: resData.creator,
+          creator: resData.post.creator,
           createdAt: resData.post.createdAt,
         };
         this.setState((prevState) => {
