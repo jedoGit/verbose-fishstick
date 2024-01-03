@@ -26,6 +26,7 @@ exports.getPosts = (req, res, next) => {
 
       return Post.find()
         .populate("creator", "_id name")
+        .sort({ createdAt: -1 })
         .skip((currentPage - 1) * perPage)
         .limit(perPage);
     })
