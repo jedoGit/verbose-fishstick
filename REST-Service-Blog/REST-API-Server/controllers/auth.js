@@ -54,9 +54,12 @@ exports.signUp = (req, res, next) => {
     })
     .then((result) => {
       logger.info("USER SIGN UP COMPLETE");
-      return res
-        .status(201)
-        .json({ message: "User Created!", userId: result._id });
+
+      const resData = { message: "User Created!", userId: result._id };
+
+      logger.debug(resData);
+
+      return res.status(201).json(resData);
     })
     .then((result) => {
       logger.info("USER SIGN UP EMAIL SENT");
@@ -77,7 +80,7 @@ exports.signUp = (req, res, next) => {
 };
 
 //-----------------
-// Controller: signUp
+// Controller: login
 //-----------------
 exports.login = (req, res, next) => {
   const email = req.body.email;
@@ -115,7 +118,11 @@ exports.login = (req, res, next) => {
 
       logger.info("USER LOGGED IN");
 
-      res.status(200).json({ token: token, userId: loadedUser._id.toString() });
+      const resData = { token: token, userId: loadedUser._id.toString() };
+
+      logger.debug(resData);
+
+      res.status(200).json(resData);
     })
     .catch((err) => {
       logger.error(err);
@@ -140,7 +147,11 @@ exports.getUserStatus = (req, res, next) => {
 
       logger.info("USER STATUS FETCHED");
 
-      res.status(200).json({ status: user.status });
+      const resData = { status: user.status };
+
+      logger.debug(resData);
+
+      res.status(200).json(resData);
     })
     .catch((err) => {
       logger.error(err);
@@ -171,7 +182,11 @@ exports.updateUserStatus = (req, res, next) => {
     .then((result) => {
       logger.info("USER STATUS UPDATED");
 
-      res.status(200).json({ message: "User Status Updated." });
+      const resData = { message: "User Status Updated." };
+
+      logger.debug(resData);
+
+      res.status(200).json(resData);
     })
     .catch((err) => {
       logger.error(err);

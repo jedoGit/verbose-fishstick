@@ -39,11 +39,15 @@ exports.getPosts = (req, res, next) => {
 
       logger.info("POSTS FETCHED");
 
-      res.status(200).json({
+      const resData = {
         message: "Posts Fetched Successfully.",
         posts: posts,
         totalItems: totalItems,
-      });
+      };
+
+      logger.debug(resData);
+
+      res.status(200).json(resData);
     })
     .catch((err) => {
       logger.error(err);
@@ -99,13 +103,18 @@ exports.createPost = (req, res, next) => {
     })
     .then((result) => {
       logger.info("USER POST CREATED");
-      res.status(201).json({
+
+      const resData = {
         message: "Post Created Successfully!",
         post: {
           ...post._doc,
           creator: { _id: req.userId, name: creator.name },
         },
-      });
+      };
+
+      logger.debug(resData);
+
+      res.status(201).json(resData);
     })
     .catch((err) => {
       logger.error(err);
@@ -132,9 +141,11 @@ exports.getPost = (req, res, next) => {
 
       logger.info("POST FETCHED");
 
-      res
-        .status(200)
-        .json({ message: "Post Fetched Successfully.", post: post });
+      const resData = { message: "Post Fetched Successfully.", post: post };
+
+      logger.debug(resData);
+
+      res.status(200).json(resData);
     })
     .catch((err) => {
       logger.error(err);
@@ -161,14 +172,16 @@ exports.updatePost = (req, res, next) => {
   const title = req.body.title;
   const content = req.body.content;
 
-  let imageUrl = req.body.image;
+  let imageUrl;
 
   if (req.file) {
     imageUrl = req.file.path.replace("\\", "/");
   }
 
-  if (!imageUrl) {
-    const error = new Error("No file selected.");
+  logger.info("imageUrl: " + imageUrl);
+
+  if (!imageUrl || typeof imageUrl === undefined) {
+    const error = new Error("No image file selected.");
     error.statusCode = 422;
     throw error;
   }
@@ -208,13 +221,17 @@ exports.updatePost = (req, res, next) => {
     .then((user) => {
       logger.info("POST UPDATED");
 
-      res.status(200).json({
+      const resData = {
         message: "Post Updated Successfully.",
         post: {
           ...updatedPost._doc,
           creator: { _id: req.userId, name: user.name },
         },
-      });
+      };
+
+      logger.debug(resData);
+
+      res.status(200).json(resData);
     })
     .catch((err) => {
       logger.error(err);
@@ -260,7 +277,11 @@ exports.deletePost = (req, res, next) => {
     .then((result) => {
       logger.info("POST DELETED");
 
-      res.status(200).json({ message: "Post Deleted Successfully." });
+      const resData = { message: "Post Deleted Successfully." };
+
+      logger.debug(resData);
+
+      res.status(200).json(resData);
     })
     .catch((err) => {
       logger.error(err);
@@ -285,6 +306,8 @@ const clearImage = (filePath) => {
   fs.unlink(filePath, (err) => {
     if (!Object.is(err, null)) {
       logger.error("clearImage Error: " + err);
+    } else {
+      logger.debug("IMAGE PATH UNLINKED: " + filePath.toString());
     }
   });
 };

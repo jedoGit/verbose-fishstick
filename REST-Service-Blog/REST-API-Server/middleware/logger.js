@@ -9,7 +9,7 @@ log4js.configure({
     file: { type: "file", filename: `${LOG_PATH}/app.log` },
   },
   categories: {
-    default: { appenders: ["console"], level: "INFO" },
+    default: { appenders: ["console"], level: "DEBUG" },
     file: { appenders: ["file"], level: "INFO" },
   },
 });
