@@ -17,6 +17,7 @@ const logger = log4jsLogger.default;
 exports.getPosts = (req, res, next) => {
   const currentPage = req.query.page || 1;
   const perPage = 2;
+  const ASCENDING_SORT = -1;
   let totalItems;
 
   Post.find()
@@ -26,7 +27,7 @@ exports.getPosts = (req, res, next) => {
 
       return Post.find()
         .populate("creator", "_id name")
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: ASCENDING_SORT })
         .skip((currentPage - 1) * perPage)
         .limit(perPage);
     })
@@ -298,7 +299,7 @@ exports.deletePost = (req, res, next) => {
 
 //-----------------
 // clearImage()
-//             Helper function when deleting/updating image
+// Helper function when deleting/updating image
 //-----------------
 
 const clearImage = (filePath) => {
