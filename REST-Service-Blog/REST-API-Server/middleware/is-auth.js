@@ -37,5 +37,7 @@ module.exports = (req, res, next) => {
   logger.info("USER TOKEN DECODED");
 
   req.userId = decodedToken.userId;
+
+  logger.debug("userId: " + req.userId);
   next();
 };
