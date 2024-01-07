@@ -7,6 +7,7 @@ This project is a simple REST-API client and server. The front-end is a borrowed
 > [!IMPORTANT]
 >
 > - Create a new file and name it `appConfig.json` and save it to the same level as `app.js` in the `REST-API-Server` directory
+> - `appConfig` is required in most of the `js` files that need to access the `configuration` values listed below.
 > - In the `appConfig.json` file, specify the following:
 >
 > ```
@@ -17,7 +18,8 @@ This project is a simple REST-API client and server. The front-end is a borrowed
 >    "mailerHost"     : "YOUR MAILER HOST",
 >    "mailerPort"     : "YOUR MAILER PORT",
 >    "jwtSecret"      : "YOUR JWT SECRET",
->    "jwtTokenExpire" : "YOUR JWT TOKEN EXPIRE"
+>    "jwtTokenExpire" : "YOUR JWT TOKEN EXPIRE",
+>    "logLevel"       : "DEBUG"
 > }
 > ```
 
