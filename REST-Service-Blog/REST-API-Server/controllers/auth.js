@@ -67,7 +67,9 @@ exports.signUp = (req, res, next) => {
         to: email,
         from: "testMailer@mailtrap.io",
         subject: "Signup succeeded!",
-        html: "<h1>Hello " + name + ", you successfully signed up!</h1>",
+        html: `<h1>Hello ${name}, you successfully signed up!</h1>
+               <h1>You can now login and update your feeds.</h1>
+        `,
       });
     })
     .catch((err) => {
