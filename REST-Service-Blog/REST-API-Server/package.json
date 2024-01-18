@@ -4,7 +4,7 @@
   "description": "Generic CRUD Service using ExpressJS Framework",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha test/**/*.js",
     "start": "nodemon app.js"
   },
   "repository": {
@@ -25,5 +25,10 @@
     "nodemailer": "^6.9.7",
     "nodemon": "^3.0.2",
     "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "chai": "^4.4.1",
+    "mocha": "^10.2.0",
+    "sinon": "^17.0.1"
   }
 }
