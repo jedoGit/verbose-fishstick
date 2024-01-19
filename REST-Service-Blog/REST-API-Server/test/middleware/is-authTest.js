@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const sinon = require("sinon");
 const isAuthMiddleware = require("../../middleware/is-auth");
 
-describe("is-auth middleware", function () {
+describe("Is-Auth Middleware", function () {
   it("should throw an error if no authorization header is present", function () {
     const req = {
       get: function () {
