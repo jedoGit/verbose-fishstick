@@ -33,6 +33,7 @@ exports.signUp = (req, res, next) => {
     const error = new Error("Validation failed, entered data is incorrect.");
     error.statusCode = 422;
     error.data = errors.array();
+    logger.error(error);
     throw error;
   }
 
@@ -73,10 +74,10 @@ exports.signUp = (req, res, next) => {
       });
     })
     .catch((err) => {
-      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
+      logger.error(err);
       next(err);
     });
 };
@@ -94,6 +95,7 @@ exports.login = (req, res, next) => {
       if (!user) {
         const error = new Error("User with this email could not be found.");
         error.statusCode = 401;
+        logger.error(error);
         throw error;
       }
 
@@ -105,6 +107,7 @@ exports.login = (req, res, next) => {
       if (!isEqual) {
         const error = new Error("Password supplied did not match.");
         error.statusCode = 401;
+        logger.error(error);
         throw error;
       }
 
@@ -127,10 +130,10 @@ exports.login = (req, res, next) => {
       res.status(200).json(resData);
     })
     .catch((err) => {
-      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
+      logger.error(err);
       next(err);
     });
 };
@@ -144,6 +147,7 @@ exports.getUserStatus = (req, res, next) => {
       if (!user) {
         const error = new Error("Could not find user.");
         statusCode = 404;
+        logger.error(error);
         throw error;
       }
 
@@ -156,10 +160,10 @@ exports.getUserStatus = (req, res, next) => {
       res.status(200).json(resData);
     })
     .catch((err) => {
-      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
+      logger.error(err);
       next(err);
     });
 };
@@ -174,6 +178,7 @@ exports.updateUserStatus = (req, res, next) => {
       if (!user) {
         const error = new Error("Could not find user.");
         statusCode = 404;
+        logger.error(error);
         throw error;
       }
 
@@ -191,10 +196,10 @@ exports.updateUserStatus = (req, res, next) => {
       res.status(200).json(resData);
     })
     .catch((err) => {
-      logger.error(err);
       if (!err.statusCode) {
         err.statusCode = 500;
       }
+      logger.error(err);
       next(err);
     });
 };
