@@ -85,57 +85,56 @@ exports.signUp = (req, res, next) => {
 //-----------------
 // Controller: login
 //-----------------
-exports.login = (req, res, next) => {
+exports.login = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   let loadedUser;
 
-  User.findOne({ email: email })
-    .then((user) => {
-      if (!user) {
-        const error = new Error("User with this email could not be found.");
-        error.statusCode = 401;
-        logger.error(error);
-        throw error;
-      }
+  try {
+    const user = await User.findOne({ email: email });
 
-      loadedUser = user;
+    if (!user) {
+      const error = new Error("User with this email could not be found.");
+      error.statusCode = 401;
+      logger.error(error);
+      throw error;
+    }
 
-      return bcrypt.compare(password, user.password);
-    })
-    .then((isEqual) => {
-      if (!isEqual) {
-        const error = new Error("Password supplied did not match.");
-        error.statusCode = 401;
-        logger.error(error);
-        throw error;
-      }
+    loadedUser = user;
 
-      // Setup the Json Web Token
-      const token = jwt.sign(
-        {
-          email: loadedUser.email,
-          userId: loadedUser._id.toString(),
-        },
-        appConfig.jwtSecret,
-        { expiresIn: appConfig.jwtTokenExpire }
-      );
+    const isEqual = await bcrypt.compare(password, user.password);
 
-      logger.info("USER LOGGED IN");
+    if (!isEqual) {
+      const error = new Error("Password supplied did not match.");
+      error.statusCode = 401;
+      logger.error(error);
+      throw error;
+    }
 
-      const resData = { token: token, userId: loadedUser._id.toString() };
+    // Setup the Json Web Token
+    const token = jwt.sign(
+      {
+        email: loadedUser.email,
+        userId: loadedUser._id.toString(),
+      },
+      appConfig.jwtSecret,
+      { expiresIn: appConfig.jwtTokenExpire }
+    );
 
-      logger.debug(resData);
+    logger.info("USER LOGGED IN");
 
-      res.status(200).json(resData);
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      logger.error(err);
-      next(err);
-    });
+    const resData = { token: token, userId: loadedUser._id.toString() };
+
+    logger.debug("User login data: " + JSON.stringify(resData));
+
+    res.status(200).json(resData);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    logger.error(err);
+    next(err);
+  }
 };
 
 //-----------------
