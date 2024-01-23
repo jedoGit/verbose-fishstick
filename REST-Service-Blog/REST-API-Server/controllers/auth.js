@@ -7,6 +7,11 @@ const appConfig = require("../appConfig.json");
 const { validationResult } = require("express-validator");
 
 //-----------------
+// Constants
+//-----------------
+const BCRYPTSALT = 12;
+
+//-----------------
 // Logger
 //-----------------
 const logger = log4jsLogger.default;
@@ -26,60 +31,59 @@ const transporter = nodeMailer.createTransport({
 //-----------------
 // Controller: signUp
 //-----------------
-exports.signUp = (req, res, next) => {
+exports.signUp = async (req, res, next) => {
   const errors = validationResult(req);
 
-  if (!errors.isEmpty()) {
-    const error = new Error("Validation failed, entered data is incorrect.");
-    error.statusCode = 422;
-    error.data = errors.array();
-    logger.error(error);
-    throw error;
-  }
+  try {
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed, entered data is incorrect.");
+      error.statusCode = 422;
+      error.data = errors.array();
+      logger.error(error);
+      throw error;
+    }
 
-  const email = req.body.email;
-  const name = req.body.name;
-  const password = req.body.password;
-  const BCRYPTSALT = 12;
+    const email = req.body.email;
+    const name = req.body.name;
+    const password = req.body.password;
 
-  bcrypt
-    .hash(password, BCRYPTSALT)
-    .then((hashedPw) => {
-      const user = new User({
-        email: email,
-        password: hashedPw,
-        name: name,
-      });
+    const hashedPw = await bcrypt.hash(password, BCRYPTSALT);
 
-      return user.save();
-    })
-    .then((result) => {
-      logger.info("USER SIGN UP COMPLETE");
+    const user = new User({
+      email: email,
+      password: hashedPw,
+      name: name,
+    });
 
-      const resData = { message: "User Created!", userId: result._id };
+    const dbDocument = await user.save();
 
-      logger.debug(resData);
+    logger.info("USER INFO SAVED TO DB");
 
-      return res.status(201).json(resData);
-    })
-    .then((result) => {
-      logger.info("USER SIGN UP EMAIL SENT");
-      transporter.sendMail({
-        to: email,
-        from: "testMailer@mailtrap.io",
-        subject: "Signup succeeded!",
-        html: `<h1>Hello ${name}, you successfully signed up!</h1>
+    const resData = { message: "User Created!", userId: dbDocument._id };
+
+    logger.debug("User account data: " + JSON.stringify(resData));
+
+    res.status(201).json(resData);
+
+    logger.info("USER ACCOUNT CREATED");
+
+    transporter.sendMail({
+      to: email,
+      from: "testMailer@mailtrap.io",
+      subject: "Signup succeeded!",
+      html: `<h1>Hello ${name}, you successfully signed up!</h1>
                <h1>You can now login and update your feeds.</h1>
         `,
-      });
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      logger.error(err);
-      next(err);
     });
+
+    logger.info("USER SIGN UP EMAIL SENT");
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    logger.error(err);
+    next(err);
+  }
 };
 
 //-----------------
