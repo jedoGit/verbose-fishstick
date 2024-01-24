@@ -34,7 +34,7 @@ exports.getPosts = (req, res, next) => {
     .then((posts) => {
       if (!posts) {
         const error = new Error("Could not fetch posts.");
-        statusCode = 404;
+        error.statusCode = 404;
         throw error;
       }
 
@@ -46,7 +46,7 @@ exports.getPosts = (req, res, next) => {
         totalItems: totalItems,
       };
 
-      logger.debug(resData);
+      logger.debug(JSON.stringify(resData));
 
       res.status(200).json(resData);
     })
@@ -113,7 +113,7 @@ exports.createPost = (req, res, next) => {
         },
       };
 
-      logger.debug(resData);
+      logger.debug(JSON.stringify(resData));
 
       res.status(201).json(resData);
     })
@@ -136,7 +136,7 @@ exports.getPost = (req, res, next) => {
     .then((post) => {
       if (!post) {
         const error = new Error("Could not find post with ID: " + postId);
-        statusCode = 404;
+        error.statusCode = 404;
         throw error;
       }
 
@@ -144,7 +144,7 @@ exports.getPost = (req, res, next) => {
 
       const resData = { message: "Post Fetched Successfully.", post: post };
 
-      logger.debug(resData);
+      logger.debug(JSON.stringify(resData));
 
       res.status(200).json(resData);
     })
@@ -193,13 +193,13 @@ exports.updatePost = (req, res, next) => {
     .then((post) => {
       if (!post) {
         const error = new Error("Could not find post with ID: " + postId);
-        statusCode = 404;
+        error.statusCode = 404;
         throw error;
       }
 
       if (post.creator.toString() !== req.userId) {
         const error = new Error("Not Authorized To Update Post.");
-        statusCode = 403;
+        error.statusCode = 403;
         throw error;
       }
 
@@ -230,7 +230,7 @@ exports.updatePost = (req, res, next) => {
         },
       };
 
-      logger.debug(resData);
+      logger.debug(JSON.stringify(resData));
 
       res.status(200).json(resData);
     })
@@ -253,13 +253,13 @@ exports.deletePost = (req, res, next) => {
     .then((post) => {
       if (!post) {
         const error = new Error("Could not find post with ID: " + postId);
-        statusCode = 404;
+        error.statusCode = 404;
         throw error;
       }
 
       if (post.creator.toString() !== req.userId) {
         const error = new Error("Not Authorized To Delete Post.");
-        statusCode = 403;
+        error.statusCode = 403;
         throw error;
       }
 
@@ -280,7 +280,7 @@ exports.deletePost = (req, res, next) => {
 
       const resData = { message: "Post Deleted Successfully." };
 
-      logger.debug(resData);
+      logger.debug(JSON.stringify(resData));
 
       res.status(200).json(resData);
     })
