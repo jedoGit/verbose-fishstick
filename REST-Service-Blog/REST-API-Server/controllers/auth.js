@@ -144,31 +144,31 @@ exports.login = async (req, res, next) => {
 //-----------------
 // Controller: getUserStatus
 //-----------------
-exports.getUserStatus = (req, res, next) => {
-  User.findById(req.userId)
-    .then((user) => {
-      if (!user) {
-        const error = new Error("Could not find user.");
-        statusCode = 404;
-        logger.error(error);
-        throw error;
-      }
+exports.getUserStatus = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId);
 
-      logger.info("USER STATUS FETCHED");
+    if (!user) {
+      const error = new Error("Could not find user.");
+      error.statusCode = 404;
+      logger.error(error);
+      throw error;
+    }
 
-      const resData = { status: user.status };
+    logger.info("USER STATUS FETCHED");
 
-      logger.debug(resData);
+    const resData = { status: user.status };
 
-      res.status(200).json(resData);
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      logger.error(err);
-      next(err);
-    });
+    logger.debug("User status: " + JSON.stringify(resData));
+
+    res.status(200).json(resData);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    logger.error(err);
+    next(err);
+  }
 };
 
 //-----------------
