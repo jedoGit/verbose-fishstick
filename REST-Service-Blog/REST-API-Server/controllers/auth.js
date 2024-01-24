@@ -174,35 +174,35 @@ exports.getUserStatus = async (req, res, next) => {
 //-----------------
 // Controller: updateUserStatus
 //-----------------
-exports.updateUserStatus = (req, res, next) => {
+exports.updateUserStatus = async (req, res, next) => {
   const newStatus = req.body.status;
-  User.findById(req.userId)
-    .then((user) => {
-      if (!user) {
-        const error = new Error("Could not find user.");
-        statusCode = 404;
-        logger.error(error);
-        throw error;
-      }
 
-      user.status = newStatus;
+  try {
+    const user = await User.findById(req.userId);
 
-      user.save();
-    })
-    .then((result) => {
-      logger.info("USER STATUS UPDATED");
+    if (!user) {
+      const error = new Error("Could not find user.");
+      error.statusCode = 404;
+      logger.error(error);
+      throw error;
+    }
 
-      const resData = { message: "User Status Updated." };
+    user.status = newStatus;
 
-      logger.debug(resData);
+    const dbDocument = await user.save();
 
-      res.status(200).json(resData);
-    })
-    .catch((err) => {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      logger.error(err);
-      next(err);
-    });
+    logger.info("USER STATUS UPDATED");
+
+    const resData = { message: "User Status Updated." };
+
+    logger.debug(JSON.stringify(resData));
+
+    res.status(200).json(resData);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    logger.error(err);
+    next(err);
+  }
 };
