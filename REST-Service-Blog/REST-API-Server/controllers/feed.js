@@ -6,6 +6,13 @@ const Post = require("../models/post");
 const User = require("../models/user");
 
 //-----------------
+// Constants
+//-----------------
+const ASCENDING_SORT = -1;
+const ITEMS_PER_PAGE = 2;
+const PAGE_ONE = 1;
+
+//-----------------
 // Logger
 //-----------------
 const logger = log4jsLogger.default;
@@ -14,49 +21,42 @@ const logger = log4jsLogger.default;
 // Controller: getPosts
 //-----------------
 
-exports.getPosts = (req, res, next) => {
-  const currentPage = req.query.page || 1;
-  const perPage = 2;
-  const ASCENDING_SORT = -1;
-  let totalItems;
+exports.getPosts = async (req, res, next) => {
+  const currentPage = req.query.page || PAGE_ONE;
 
-  Post.find()
-    .countDocuments()
-    .then((count) => {
-      totalItems = count;
+  try {
+    const totalItems = await Post.find().countDocuments();
 
-      return Post.find()
-        .populate("creator", "_id name")
-        .sort({ createdAt: ASCENDING_SORT })
-        .skip((currentPage - 1) * perPage)
-        .limit(perPage);
-    })
-    .then((posts) => {
-      if (!posts) {
-        const error = new Error("Could not fetch posts.");
-        error.statusCode = 404;
-        throw error;
-      }
+    const posts = await Post.find()
+      .populate("creator", "_id name")
+      .sort({ createdAt: ASCENDING_SORT })
+      .skip((currentPage - 1) * ITEMS_PER_PAGE)
+      .limit(ITEMS_PER_PAGE);
 
-      logger.info("POSTS FETCHED");
+    if (!posts) {
+      const error = new Error("Could not fetch posts.");
+      error.statusCode = 404;
+      throw error;
+    }
 
-      const resData = {
-        message: "Posts Fetched Successfully.",
-        posts: posts,
-        totalItems: totalItems,
-      };
+    logger.info("POSTS FETCHED");
 
-      logger.debug(JSON.stringify(resData));
+    const resData = {
+      message: "Posts Fetched Successfully.",
+      posts: posts,
+      totalItems: totalItems,
+    };
 
-      res.status(200).json(resData);
-    })
-    .catch((err) => {
-      logger.error(err);
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-    });
+    logger.debug("Posts: " + JSON.stringify(resData));
+
+    res.status(200).json(resData);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    logger.error(err);
+    next(err);
+  }
 };
 
 //-----------------
