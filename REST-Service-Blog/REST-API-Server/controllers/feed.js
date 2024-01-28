@@ -22,9 +22,9 @@ const logger = log4jsLogger.default;
 //-----------------
 
 exports.getPosts = async (req, res, next) => {
-  const currentPage = req.query.page || PAGE_ONE;
-
   try {
+    const currentPage = req.query.page || PAGE_ONE;
+
     const totalItems = await Post.find().countDocuments();
 
     const posts = await Post.find()
@@ -62,68 +62,62 @@ exports.getPosts = async (req, res, next) => {
 //-----------------
 // Controller: createPost
 //-----------------
-exports.createPost = (req, res, next) => {
-  const errors = validationResult(req);
+exports.createPost = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
 
-  if (!errors.isEmpty()) {
-    const error = new Error("Validation failed, entered data is incorrect.");
-    error.statusCode = 422;
-    throw error;
-  }
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed, entered data is incorrect.");
+      error.statusCode = 422;
+      throw error;
+    }
 
-  if (!req.file) {
-    const error = new Error("No image provided.");
-    error.statusCode = 422;
-    throw error;
-  }
+    if (!req.file) {
+      const error = new Error("No image provided.");
+      error.statusCode = 422;
+      throw error;
+    }
 
-  const imageUrl = req.file.path.replace("\\", "/");
-  const title = req.body.title;
-  const content = req.body.content;
+    const imageUrl = req.file.path.replace("\\", "/");
+    const title = req.body.title;
+    const content = req.body.content;
 
-  let creator;
-
-  // Create post in db
-  const post = new Post({
-    title: title,
-    content: content,
-    imageUrl: imageUrl,
-    creator: req.userId,
-  });
-
-  post
-    .save()
-    .then((result) => {
-      return User.findById(req.userId);
-    })
-    .then((user) => {
-      creator = user;
-      user.posts.push(post);
-
-      return user.save();
-    })
-    .then((result) => {
-      logger.info("USER POST CREATED");
-
-      const resData = {
-        message: "Post Created Successfully!",
-        post: {
-          ...post._doc,
-          creator: { _id: req.userId, name: creator.name },
-        },
-      };
-
-      logger.debug(JSON.stringify(resData));
-
-      res.status(201).json(resData);
-    })
-    .catch((err) => {
-      logger.error(err);
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
+    // Create post in db
+    const post = new Post({
+      title: title,
+      content: content,
+      imageUrl: imageUrl,
+      creator: req.userId,
     });
+
+    const postDocument = await post.save();
+
+    const creatorDocument = await User.findById(req.userId);
+
+    creatorDocument.posts.push(post);
+
+    const userSaveDocument = await creatorDocument.save();
+
+    logger.info("USER POST CREATED");
+
+    const resData = {
+      message: "Post Created Successfully!",
+      post: {
+        ...post._doc,
+        creator: { _id: req.userId, name: creatorDocument.name },
+      },
+    };
+
+    logger.debug(JSON.stringify(resData));
+
+    res.status(201).json(resData);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    logger.error(err);
+    next(err);
+  }
 };
 
 //-----------------
