@@ -123,32 +123,35 @@ exports.createPost = async (req, res, next) => {
 //-----------------
 // Controller: getPost
 //-----------------
-exports.getPost = (req, res, next) => {
+exports.getPost = async (req, res, next) => {
   const postId = req.params.postId;
 
-  Post.findById(postId)
-    .then((post) => {
-      if (!post) {
-        const error = new Error("Could not find post with ID: " + postId);
-        error.statusCode = 404;
-        throw error;
-      }
+  try {
+    const postDocument = await Post.findById(postId);
 
-      logger.info("POST FETCHED");
+    if (!postDocument) {
+      const error = new Error("Could not find post with ID: " + postId);
+      error.statusCode = 404;
+      throw error;
+    }
 
-      const resData = { message: "Post Fetched Successfully.", post: post };
+    logger.info("POST FETCHED");
 
-      logger.debug(JSON.stringify(resData));
+    const resData = {
+      message: "Post Fetched Successfully.",
+      post: postDocument,
+    };
 
-      res.status(200).json(resData);
-    })
-    .catch((err) => {
-      logger.error(err);
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-    });
+    logger.debug(JSON.stringify(resData));
+
+    res.status(200).json(resData);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    logger.error(err);
+    next(err);
+  }
 };
 
 //-----------------
