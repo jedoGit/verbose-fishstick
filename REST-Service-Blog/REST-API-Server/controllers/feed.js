@@ -157,87 +157,81 @@ exports.getPost = async (req, res, next) => {
 //-----------------
 // Controller: updatePost
 //-----------------
-exports.updatePost = (req, res, next) => {
+exports.updatePost = async (req, res, next) => {
   const errors = validationResult(req);
 
-  if (!errors.isEmpty()) {
-    const error = new Error("Validation failed, entered data is incorrect.");
-    error.statusCode = 422;
-    throw error;
+  try {
+    if (!errors.isEmpty()) {
+      const error = new Error("Validation failed, entered data is incorrect.");
+      error.statusCode = 422;
+      throw error;
+    }
+
+    const postId = req.params.postId;
+    const title = req.body.title;
+    const content = req.body.content;
+
+    let imageUrl;
+
+    if (req.file) {
+      imageUrl = req.file.path.replace("\\", "/");
+    }
+
+    logger.info("imageUrl: " + imageUrl);
+
+    if (!imageUrl || typeof imageUrl === undefined) {
+      const error = new Error("No image file selected.");
+      error.statusCode = 422;
+      throw error;
+    }
+
+    const postDocument = await Post.findById(postId);
+
+    if (!postDocument) {
+      const error = new Error("Could not find post with ID: " + postId);
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (postDocument.creator.toString() !== req.userId) {
+      const error = new Error("Not Authorized To Update Post.");
+      error.statusCode = 403;
+      throw error;
+    }
+
+    // Delete the old image if there's a new image uploaded
+    if (imageUrl !== postDocument.imageUrl) {
+      clearImage(postDocument.imageUrl);
+    }
+
+    postDocument.title = title;
+    postDocument.content = content;
+    postDocument.imageUrl = imageUrl;
+
+    const postSaveDocument = await postDocument.save();
+
+    const userDocument = await User.findById(req.userId);
+
+    logger.info("POST UPDATED");
+
+    const resData = {
+      message: "Post Updated Successfully.",
+      post: {
+        ...postSaveDocument._doc,
+        creator: { _id: req.userId, name: userDocument.name },
+      },
+    };
+
+    logger.debug(JSON.stringify(resData));
+
+    res.status(200).json(resData);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    logger.error(err);
+    next(err);
   }
-
-  const postId = req.params.postId;
-  const title = req.body.title;
-  const content = req.body.content;
-
-  let imageUrl;
-
-  if (req.file) {
-    imageUrl = req.file.path.replace("\\", "/");
-  }
-
-  logger.info("imageUrl: " + imageUrl);
-
-  if (!imageUrl || typeof imageUrl === undefined) {
-    const error = new Error("No image file selected.");
-    error.statusCode = 422;
-    throw error;
-  }
-
-  let updatedPost;
-
-  Post.findById(postId)
-    .then((post) => {
-      if (!post) {
-        const error = new Error("Could not find post with ID: " + postId);
-        error.statusCode = 404;
-        throw error;
-      }
-
-      if (post.creator.toString() !== req.userId) {
-        const error = new Error("Not Authorized To Update Post.");
-        error.statusCode = 403;
-        throw error;
-      }
-
-      // Delete the old image if there's a new image uploaded
-      if (imageUrl !== post.imageUrl) {
-        clearImage(post.imageUrl);
-      }
-
-      post.title = title;
-      post.content = content;
-      post.imageUrl = imageUrl;
-
-      return post.save();
-    })
-    .then((result) => {
-      updatedPost = result;
-
-      return User.findById(req.userId);
-    })
-    .then((user) => {
-      logger.info("POST UPDATED");
-
-      const resData = {
-        message: "Post Updated Successfully.",
-        post: {
-          ...updatedPost._doc,
-          creator: { _id: req.userId, name: user.name },
-        },
-      };
-
-      logger.debug(JSON.stringify(resData));
-
-      res.status(200).json(resData);
-    })
-    .catch((err) => {
-      logger.error(err);
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-    });
 };
 
 //-----------------
