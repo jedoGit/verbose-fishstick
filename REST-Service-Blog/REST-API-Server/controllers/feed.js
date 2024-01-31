@@ -243,51 +243,49 @@ exports.updatePost = (req, res, next) => {
 //-----------------
 // Controller: deletePost
 //-----------------
-exports.deletePost = (req, res, next) => {
+exports.deletePost = async (req, res, next) => {
   const postId = req.params.postId;
 
-  Post.findById(postId)
-    .then((post) => {
-      if (!post) {
-        const error = new Error("Could not find post with ID: " + postId);
-        error.statusCode = 404;
-        throw error;
-      }
+  try {
+    const postDocument = await Post.findById(postId);
 
-      if (post.creator.toString() !== req.userId) {
-        const error = new Error("Not Authorized To Delete Post.");
-        error.statusCode = 403;
-        throw error;
-      }
+    if (!postDocument) {
+      const error = new Error("Could not find post with ID: " + postId);
+      error.statusCode = 404;
+      throw error;
+    }
 
-      // Delete the image
-      clearImage(post.imageUrl);
+    if (postDocument.creator.toString() !== req.userId) {
+      const error = new Error("Not Authorized To Delete Post.");
+      error.statusCode = 403;
+      throw error;
+    }
 
-      return Post.findByIdAndDelete(postId);
-    })
-    .then((result) => {
-      return User.findById(req.userId);
-    })
-    .then((user) => {
-      user.posts.pull(postId);
-      return user.save();
-    })
-    .then((result) => {
-      logger.info("POST DELETED");
+    // Delete the image
+    clearImage(postDocument.imageUrl);
 
-      const resData = { message: "Post Deleted Successfully." };
+    const postDeleteDocument = await Post.findByIdAndDelete(postId);
 
-      logger.debug(JSON.stringify(resData));
+    const userFindDocument = await User.findById(req.userId);
 
-      res.status(200).json(resData);
-    })
-    .catch((err) => {
-      logger.error(err);
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
-    });
+    userFindDocument.posts.pull(postId);
+
+    const userSaveDocument = await userFindDocument.save();
+
+    logger.info("POST DELETED");
+
+    const resData = { message: "Post Deleted Successfully." };
+
+    logger.debug(JSON.stringify(resData));
+
+    res.status(200).json(resData);
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    logger.error(err);
+    next(err);
+  }
 };
 
 //-----------------
