@@ -1,0 +1,25 @@
+version: "3.9"
+services:
+  rest-api-client:
+    restart: on-failure
+    build: ./REST-Service-Blog/REST-API-Client
+    ports:
+      - "3000:3000"
+
+  rest-api-server:
+    restart: on-failure
+    build: ./REST-Service-Blog/REST-API-Server
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mongo_db
+
+  mongo_db:
+    container_name: db_container
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo_db:/data/db
+
+volumes:
+  mongo_db: {}
