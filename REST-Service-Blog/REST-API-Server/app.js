@@ -6,7 +6,6 @@ const mongoose = require("mongoose");
 const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
 const mime = require("mime-types");
-const appConfig = require("./appConfig.json");
 const feedRoutes = require("./routes/feed");
 const authRoutes = require("./routes/auth");
 const app = express();
@@ -92,7 +91,7 @@ app.use((error, req, res, next) => {
 //-----------------
 // Connect DB
 mongoose
-  .connect(appConfig.dbUri)
+  .connect(process.env.DB_URI)
   .then((result) => {
     logger.info("APP STARTED");
     app.listen(8081);

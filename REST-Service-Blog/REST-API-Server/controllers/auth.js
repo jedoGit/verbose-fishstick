@@ -3,7 +3,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodeMailer = require("nodemailer");
 const log4jsLogger = require("../middleware/logger");
-const appConfig = require("../appConfig.json");
 const { validationResult } = require("express-validator");
 
 //-----------------
@@ -20,11 +19,11 @@ const logger = log4jsLogger.default;
 // Mailtrap.io Mailer service
 //-----------------
 const transporter = nodeMailer.createTransport({
-  host: appConfig.mailerHost,
-  port: appConfig.mailerPort,
+  host: process.env.MAILER_HOST,
+  port: process.env.MAILER_PORT,
   auth: {
-    user: appConfig.mailerUser,
-    pass: appConfig.mailerPass,
+    user: process.env.MAILER_USER,
+    pass: process.env.MAILER_PASS,
   },
 });
 
@@ -106,7 +105,12 @@ exports.login = async (req, res, next) => {
 
     loadedUser = user;
 
+    logger.debug("loadedUser: " + JSON.stringify(loadedUser));
+    // logger.debug("req: " + JSON.stringify(req));
+
     const isEqual = await bcrypt.compare(password, user.password);
+
+    logger.debug("isEqual: " + isEqual);
 
     if (!isEqual) {
       const error = new Error("Password supplied did not match.");
@@ -121,9 +125,16 @@ exports.login = async (req, res, next) => {
         email: loadedUser.email,
         userId: loadedUser._id.toString(),
       },
-      appConfig.jwtSecret,
-      { expiresIn: appConfig.jwtTokenExpire }
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_TOKEN_EXPIRE }
     );
+
+    if (!token) {
+      const error = new Error("JWT token error.");
+      error.statusCode = 401;
+      logger.error(error);
+      throw error;
+    }
 
     logger.info("USER LOGGED IN");
 
@@ -132,12 +143,14 @@ exports.login = async (req, res, next) => {
     logger.debug("User login data: " + JSON.stringify(resData));
 
     res.status(200).json(resData);
+    return;
   } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
     logger.error(err);
     next(err);
+    return err;
   }
 };
 

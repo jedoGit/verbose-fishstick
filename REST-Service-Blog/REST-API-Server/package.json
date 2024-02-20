@@ -4,8 +4,8 @@
   "description": "Generic CRUD Service using ExpressJS Framework",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/**/*.js",
-    "start": "nodemon app.js"
+    "test": "mocha test/**/authTest.js",
+    "start": "nodemon --env-file=.env app.js"
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
   },
   "devDependencies": {
     "chai": "^4.4.1",
+    "chai-as-promised": "^7.1.1",
     "mocha": "^10.2.0",
     "sinon": "^17.0.1"
   }

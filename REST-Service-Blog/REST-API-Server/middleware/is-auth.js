@@ -1,6 +1,5 @@
 const jwt = require("jsonwebtoken");
 const log4jsLogger = require("../middleware/logger");
-const appConfig = require("../appConfig.json");
 
 //-----------------
 // Logger
@@ -24,7 +23,7 @@ module.exports = (req, res, next) => {
   let decodedToken;
 
   try {
-    decodedToken = jwt.verify(token, appConfig.jwtSecret);
+    decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
     logger.error("Error with jwt.verify call.");
     err.statusCode = 500;

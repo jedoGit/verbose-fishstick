@@ -6,21 +6,19 @@ This project is a simple REST-API client and server. The front-end is a borrowed
 
 > [!IMPORTANT]
 >
-> - Create a new file and name it `appConfig.json` and save it to the same level as `app.js` in the `./REST-API-Server` directory
-> - `appConfig` is required in most of the `js` files that need to access the `configuration` values listed below.
-> - In the `appConfig.json` file, specify the following:
+> - Create a new file and name it `.env` and save it to the same level as `app.js` in the `./REST-API-Server` directory
+> - `.env` is required in most of the `js` files that need to access the `configuration` values listed below.
+> - In the `.env` file, specify the following:
 >
 > ```
-> {
->    "dbUri"          : "mongodb://mongo_db:27017/messages?retryWrites=true&w=majority",
->    "mailerUser"     : "YOUR MAILER USER",
->    "mailerPass"     : "YOUR MAILER PASSWORD",
->    "mailerHost"     : "YOUR MAILER HOST",
->    "mailerPort"     : "YOUR MAILER PORT",
->    "jwtSecret"      : "YOUR JWT SECRET",
->    "jwtTokenExpire" : "YOUR JWT TOKEN EXPIRE",
->    "logLevel"       : "DEBUG"
-> }
+> DB_URI="mongodb://mongo_db:27017/messages?retryWrites=true&w=majority"
+> MAILER_USER="YOUR MAILER USER""
+> MAILER_PASS="YOUR MAILER PASSWORD"
+> MAILER_HOST="YOUR MAILER HOST"
+> MAILER_PORT="YOUR MAILER PORT"
+> JWT_SECRET="YOUR JWT SECRET"
+> JWT_TOKEN_EXPIRE="30m"
+> LOG_LEVEL="DEBUG"
 > ```
 
 ## Start the REST-Service-Blog using docker compose
