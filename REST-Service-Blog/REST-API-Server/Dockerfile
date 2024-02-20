@@ -12,6 +12,8 @@ RUN npm install
 
 COPY --chown=node:node . .
 
+RUN mkdir -p /home/node/app/server/images && chown -R node:node /home/node/app/server/images
+
 EXPOSE 8081
 
 CMD [ "npm", "start"]

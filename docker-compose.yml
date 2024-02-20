@@ -11,6 +11,8 @@ services:
     build: ./REST-Service-Blog/REST-API-Server
     ports:
       - "8081:8081"
+    volumes:
+      - rest-api-server:/home/node/app/server/images
     depends_on:
       - mongo_db
 
@@ -25,3 +27,4 @@ services:
 
 volumes:
   mongo_db: {}
+  rest-api-server: {}
