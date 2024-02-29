@@ -4,11 +4,11 @@ RUN mkdir -p /home/node/app/client/node_modules && chown -R node:node /home/node
 
 WORKDIR /home/node/app/client
 
-COPY package.json /home/node/app/client
+COPY package*.json /home/node/app/client
 
 USER node
 
-RUN npm install
+RUN npm ci
 
 COPY --chown=node:node . .
 
