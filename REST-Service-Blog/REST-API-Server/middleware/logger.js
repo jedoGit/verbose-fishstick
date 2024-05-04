@@ -2,6 +2,7 @@ const log4js = require("log4js");
 const path = require("path");
 
 const LOG_PATH = path.join(__dirname, "..", "logs");
+const LOG_LEVEL = "DEBUG";
 
 log4js.configure({
   appenders: {
@@ -9,8 +10,8 @@ log4js.configure({
     file: { type: "file", filename: `${LOG_PATH}/app.log` },
   },
   categories: {
-    default: { appenders: ["console"], level: process.env.LOG_LEVEL },
-    file: { appenders: ["file"], level: process.env.LOG_LEVEL },
+    default: { appenders: ["console"], level: LOG_LEVEL },
+    file: { appenders: ["file"], level: LOG_LEVEL },
   },
 });
 
