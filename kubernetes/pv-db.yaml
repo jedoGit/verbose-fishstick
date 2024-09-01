@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-db
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  claimRef:
+    name: pv-db-claim
+    namespace: ns
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/db/data"

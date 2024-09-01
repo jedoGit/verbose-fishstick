@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: client
+    run: client
+  name: client
+  namespace: ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: client
+        run: client
+    spec:
+      containers:
+      - image: rest-client:0.0.1
+        imagePullPolicy: Never
+        name: client
+        ports:
+        - containerPort: 3000
+        resources: {}
+status: {}

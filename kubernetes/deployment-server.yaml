@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: server
+    run: server
+  name: server
+  namespace: ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: server
+        run: server
+    spec:
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      initContainers:
+      - image: busybox
+        command: ["/bin/chown", "-R", "1000:1000", "/home/node/app/server/images"]
+        securityContext:
+          runAsUser: 0
+          privileged: true
+        imagePullPolicy: Never
+        name: change-ownership-container
+        volumeMounts:
+        - mountPath: /home/node/app/server/images
+          name: pv-image-storage
+      containers:
+      - image: rest-server:0.0.1
+        imagePullPolicy: Never
+        name: server
+        ports:
+        - containerPort: 8081
+        volumeMounts:
+        - mountPath: /home/node/app/server/images
+          name: pv-image-storage
+        resources: {}
+      volumes:
+      - name: pv-image-storage
+        persistentVolumeClaim:
+          claimName: pv-server-claim
+status: {}
