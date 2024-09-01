@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   rest-api-client:
     restart: on-failure
@@ -31,11 +30,14 @@ services:
       - "80:80"
 
   mongo_db:
-    image: mongo:latest
+    image: mongo:4.2.0-bionic
     restart: always
     container_name: mongo_db
     ports:
       - "27017:27017"
+    environment:
+     MONG0_INITDB_ROOT_USERNAME: "root"
+     MONG0_INITDB_ROOT_PASSWORD: "1234qwerasdf!@#$"
     volumes:
       - mongo_db:/data/db
 
