@@ -88,13 +88,13 @@ spec:
           httpGet:
             path: /system/healthz
             port: 8081
-          failureThreshold: 30
+          failureThreshold: 10
           periodSeconds: 10
         readinessProbe:
           httpGet:
             path: /system/readyz
             port: 8081
-          periodSeconds: 10     
+          periodSeconds: 15
         resources: {}
       volumes:
       - name: pv-image-storage
