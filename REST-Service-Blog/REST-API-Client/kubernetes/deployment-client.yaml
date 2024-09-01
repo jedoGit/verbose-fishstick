@@ -26,5 +26,11 @@ spec:
         name: client
         ports:
         - containerPort: 3000
+        env:
+        - name: REACT_APP_BACKEND_SERVER_ADDR
+          valueFrom: 
+            configMapKeyRef:
+              name: client-configmap
+              key: REACT_APP_BACKEND_SERVER_ADDR
         resources: {}
 status: {}
