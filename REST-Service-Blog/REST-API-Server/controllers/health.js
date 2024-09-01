@@ -1,4 +1,5 @@
 const log4jsLogger = require("../middleware/logger");
+const mongoose = require("mongoose")
 
 //-----------------
 // Logger
@@ -12,7 +13,17 @@ exports.getSystemHealth = async (req, res, next) => {
   try {
     logger.info("SYSTEM HEALTH FETCHED");
 
-    const resData = { status: "OK" };
+    // Check connection to the database
+    const dbState = mongoose.STATES[mongoose.connection.readyState];
+
+    if ( dbState !== "connected" )
+    {
+      const error = new Error("Database Not Connected");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const resData = { status: "OK", dbState: dbState};
 
     logger.debug("System Health Status: " + JSON.stringify(resData));
 
@@ -33,7 +44,17 @@ exports.getSystemReady = async (req, res, next) => {
   try {
     logger.info("SYSTEM READY STATUS FETCHED");
 
-    const resData = { status: "OK" };
+    // Check connection to the database
+    const dbState = mongoose.STATES[mongoose.connection.readyState];
+
+    if ( dbState !== "connected" )
+    {
+      const error = new Error("Database Not Connected");
+      error.statusCode = 404;
+      throw error;
+    }    
+
+    const resData = { status: "OK", dbState: dbState};
 
     logger.debug("System Ready Status: " + JSON.stringify(resData));
 
