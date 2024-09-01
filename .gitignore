@@ -4,3 +4,7 @@ REST-Service-Blog/REST-API-Server/images
 REST-Service-Blog/REST-API-Server/appConfig.json
 REST-Service-Blog/REST-API-Server/.env
 REST-Service-Blog/REST-API-Server/logs
+*.env
+
+kubernetes/secret-server.yaml
+kubernetes/configmap-server.yaml
