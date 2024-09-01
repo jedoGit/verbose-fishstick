@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  DB_URI: "YOUR MONGODB URI"
+  MAILER_HOST: "YOUR MAILER HOST"
+  MAILER_PORT: "YOUR MAILER PORT"
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: server-configmap
+  namespace: ns

@@ -43,6 +43,41 @@ spec:
         volumeMounts:
         - mountPath: /home/node/app/server/images
           name: pv-image-storage
+        env:
+        - name: DB_URI
+          valueFrom: 
+            configMapKeyRef:
+              name: server-configmap
+              key: DB_URI
+        - name: MAILER_USER
+          valueFrom: 
+            secretKeyRef:
+              name: server-secret
+              key: MAILER_USER
+        - name: MAILER_PASS
+          valueFrom: 
+            secretKeyRef:
+              name: server-secret
+              key: MAILER_PASS
+        - name: MAILER_HOST
+          valueFrom: 
+            configMapKeyRef:
+              name: server-configmap
+              key: MAILER_HOST
+        - name: MAILER_PORT
+          valueFrom: 
+            configMapKeyRef:
+              name: server-configmap
+              key: MAILER_PORT
+        - name: JWT_SECRET
+          valueFrom: 
+            secretKeyRef:
+              name: server-secret
+              key: JWT_SECRET
+        - name: JWT_TOKEN_EXPIRE
+          value: "30m"
+        - name: LOG_LEVEL
+          value: "DEBUG"
         resources: {}
       volumes:
       - name: pv-image-storage
