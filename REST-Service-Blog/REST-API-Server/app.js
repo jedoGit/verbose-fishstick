@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require("uuid");
 const mime = require("mime-types");
 const feedRoutes = require("./routes/feed");
 const authRoutes = require("./routes/auth");
+const healthRoutes = require("./routes/health");
 const app = express();
 
 //-----------------
@@ -74,6 +75,7 @@ app.use((req, res, next) => {
 //-----------------
 app.use("/feed", feedRoutes);
 app.use("/auth", authRoutes);
+app.use("/system", healthRoutes);
 
 //-----------------
 // Register Error handler middleware

@@ -78,6 +78,23 @@ spec:
           value: "30m"
         - name: LOG_LEVEL
           value: "DEBUG"
+        livenessProbe:
+          httpGet:
+            path: /system/healthz
+            port: 8081
+          failureThreshold: 1
+          periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /system/healthz
+            port: 8081
+          failureThreshold: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /system/readyz
+            port: 8081
+          periodSeconds: 10     
         resources: {}
       volumes:
       - name: pv-image-storage
