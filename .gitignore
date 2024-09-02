@@ -13,3 +13,6 @@ REST-Service-Blog/REST-API-Client/kubernetes/secret-server.yaml
 REST-Service-Blog/REST-API-Server/kubernetes/secret-server.yaml
 REST-Service-Blog/REST-API-Server/kubernetes/configmap-server.yaml
 REST-Service-Blog/REST-API-Client/kubernetes/configmap-client.yaml
+REST-API-Client/kubernetes/configmap-client.yaml
+REST-API-Server/kubernetes/configmap-server.yaml
+REST-API-Server/kubernetes/secret-server.yaml
