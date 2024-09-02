@@ -29,7 +29,13 @@ spec:
         volumeMounts:
         - mountPath: /data/db
           name: pv-db-storage
-        resources: {}
+        resources: 
+          requests:
+            memory: 512Mi
+            cpu: 500m
+          limits:
+            memory: 1Gi
+            cpu: 1000m
       volumes:
       - name: pv-db-storage
         persistentVolumeClaim:

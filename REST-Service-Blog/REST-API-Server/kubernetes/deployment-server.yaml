@@ -95,7 +95,13 @@ spec:
             path: /system/readyz
             port: 8081
           periodSeconds: 15
-        resources: {}
+        resources: 
+          requests:
+            memory: 512Mi
+            cpu: 500m
+          limits:
+            memory: 1Gi
+            cpu: 1000m
       volumes:
       - name: pv-image-storage
         persistentVolumeClaim:
