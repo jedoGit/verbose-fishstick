@@ -1,6 +1,7 @@
 apiVersion: v1
 data:
-  REACT_APP_BACKEND_SERVER_ADDR: "YOUR BACKEND SERVER ADDRESS"
+  config.js: |
+    window.REACT_APP_BACKEND_SERVER_ADDR = "http://localhost:30766";
 kind: ConfigMap
 metadata:
   creationTimestamp: null

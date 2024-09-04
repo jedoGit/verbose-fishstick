@@ -11,6 +11,7 @@ import FeedPage from "./pages/Feed/Feed";
 import SinglePostPage from "./pages/Feed/SinglePost/SinglePost";
 import LoginPage from "./pages/Auth/Login";
 import SignupPage from "./pages/Auth/Signup";
+import { REACT_APP_BACKEND_SERVER_ADDR } from "./config";
 import "./App.css";
 
 class App extends Component {
@@ -59,7 +60,7 @@ class App extends Component {
   loginHandler = (event, authData) => {
     event.preventDefault();
     this.setState({ authLoading: true });
-    fetch("http://192.168.49.2:30766/auth/login", {
+    fetch(REACT_APP_BACKEND_SERVER_ADDR + "/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -107,7 +108,7 @@ class App extends Component {
   signupHandler = (event, authData) => {
     event.preventDefault();
     this.setState({ authLoading: true });
-    fetch("http://192.168.49.2:30766/auth/signup", {
+    fetch(REACT_APP_BACKEND_SERVER_ADDR + "/auth/signup", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

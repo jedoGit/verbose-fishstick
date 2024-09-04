@@ -26,12 +26,10 @@ spec:
         name: client
         ports:
         - containerPort: 3000
-        env:
-        - name: REACT_APP_BACKEND_SERVER_ADDR
-          valueFrom: 
-            configMapKeyRef:
-              name: client-configmap
-              key: REACT_APP_BACKEND_SERVER_ADDR
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html/config.js
+          name: client-config-file
+          subPath: config.js
         resources: 
           requests:
             memory: 512Mi
@@ -39,4 +37,10 @@ spec:
           limits:
             memory: 1Gi
             cpu: 1000m
+      volumes:
+      - configMap:
+          name: client-configmap
+          defaultMode: 420
+          optional: true
+        name: client-config-file
 status: {}

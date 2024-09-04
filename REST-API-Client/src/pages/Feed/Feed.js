@@ -7,6 +7,7 @@ import Input from "../../components/Form/Input/Input";
 import Paginator from "../../components/Paginator/Paginator";
 import Loader from "../../components/Loader/Loader";
 import ErrorHandler from "../../components/ErrorHandler/ErrorHandler";
+import { REACT_APP_BACKEND_SERVER_ADDR } from "../../config";
 import "./Feed.css";
 
 class Feed extends Component {
@@ -22,7 +23,7 @@ class Feed extends Component {
   };
 
   componentDidMount() {
-    fetch("http://192.168.49.2:30766/auth/status", {
+    fetch(REACT_APP_BACKEND_SERVER_ADDR + "/auth/status", {
       headers: {
         Authorization: "Bearer " + this.props.token,
       },
@@ -58,7 +59,7 @@ class Feed extends Component {
       this.setState({ postPage: page });
     }
 
-    fetch("http://192.168.49.2:30766/feed/posts?page=" + page, {
+    fetch(REACT_APP_BACKEND_SERVER_ADDR + "/feed/posts?page=" + page, {
       headers: {
         Authorization: "Bearer " + this.props.token,
       },
@@ -86,7 +87,7 @@ class Feed extends Component {
 
   statusUpdateHandler = (event) => {
     event.preventDefault();
-    fetch("http://192.168.49.2:30766/auth/status", {
+    fetch(REACT_APP_BACKEND_SERVER_ADDR + "/auth/status", {
       method: "PATCH",
       body: JSON.stringify({ status: this.state.status }),
       headers: {
@@ -136,11 +137,12 @@ class Feed extends Component {
     formData.append("content", postData.content);
     formData.append("image", postData.image);
 
-    let url = "http://192.168.49.2:30766/feed/post";
+    let url = REACT_APP_BACKEND_SERVER_ADDR + "/feed/post";
     let method = "POST";
 
     if (this.state.editPost) {
-      url = "http://192.168.49.2:30766/feed/post/" + this.state.editPost._id;
+      url =
+        REACT_APP_BACKEND_SERVER_ADDR + "/feed/post/" + this.state.editPost._id;
       method = "PUT";
     }
 
@@ -208,7 +210,7 @@ class Feed extends Component {
   deletePostHandler = (postId) => {
     this.setState({ postsLoading: true });
 
-    let url = "http://192.168.49.2:30766/feed/post/" + postId;
+    let url = REACT_APP_BACKEND_SERVER_ADDR + "/feed/post/" + postId;
     let method = "DELETE";
 
     fetch(url, {
