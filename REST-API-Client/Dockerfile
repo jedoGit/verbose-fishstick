@@ -26,7 +26,7 @@ RUN  npm run build --prod
 FROM nginx:latest
 
 RUN mkdir -p /etc/nginx/ssl
-COPY /Certificate/* /etc/nginx/ssl/
+COPY --chown=node:node /Certificate/* /etc/nginx/ssl
 
 COPY --from=web-build /home/node/app/client/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
