@@ -89,4 +89,5 @@ This project is a simple REST-API client and server. The front-end is a borrowed
 >   
 ## Generate Self-Signed Certificate
 > -`openssl req -x509 -days 90 -nodes -newkey rsa:2048 -keyout /<path>/site.key -out /<path>/site.crt`
+> 
 > -`openssl dhparam -out /<path>/dhparam.pem 2048`
