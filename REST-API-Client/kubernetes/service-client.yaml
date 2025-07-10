@@ -9,11 +9,13 @@ metadata:
   namespace: ns
 spec:
   ports:
-  - nodePort: 31602
+  - name: http
+    nodePort: 31602
     port: 3000
     protocol: TCP
     targetPort: 3000
-  - nodePort: 31443
+  - name: https
+    nodePort: 31443
     port: 443
     protocol: TCP
     targetPort: 443
