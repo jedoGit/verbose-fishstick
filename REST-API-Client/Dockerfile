@@ -1,6 +1,6 @@
 # Setup the web-app image
 # Pull from official node base image
-FROM node:20.11.1-alpine as web-build
+FROM node:20.11.1-alpine AS web-build
 
 # Setup the work dir for the web-app
 RUN mkdir -p /home/node/app/client/node_modules && chown -R node:node /home/node/app/client
@@ -31,6 +31,7 @@ COPY --from=web-build /home/node/app/client/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 3000
+EXPOSE 443
 
 # Start the nginx server
 # CMD [ "npm", "start"]
