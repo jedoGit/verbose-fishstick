@@ -21,7 +21,7 @@ spec:
         run: client
     spec:
       containers:
-      - image: rest-client:0.0.2
+      - image: rest-client:0.0.1
         imagePullPolicy: Never
         name: client
         ports:
