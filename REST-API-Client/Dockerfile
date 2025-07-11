@@ -25,7 +25,7 @@ RUN  npm run build --prod
 # Second stage 
 FROM nginx:latest
 
-COPY Certificate/ /etc/nginx/ssl/
+COPY certificates/ /etc/nginx/ssl/
 
 COPY --from=web-build /home/node/app/client/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
