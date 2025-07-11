@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: mongodb
+    run: mongodb
+  name: mongodb
+  namespace: ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: mongodb
+        run: mongodb
+    spec:
+      containers:
+      - image: mongo
+        imagePullPolicy: Always
+        name: mongodb
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - mountPath: /data/db
+          name: pv-db-storage
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 500m
+          limits:
+            memory: 1Gi
+            cpu: 1000m
+      volumes:
+      - name: pv-db-storage
+        persistentVolumeClaim:
+          claimName: pv-db-claim
+status: {}

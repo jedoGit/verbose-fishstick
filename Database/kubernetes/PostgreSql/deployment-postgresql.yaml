@@ -3,33 +3,36 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    app: mongodb
-    run: mongodb
-  name: mongodb
+    app: postgres
+    run: postgres
+  name: postgres
   namespace: ns
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongodb
+      app: postgres
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        app: mongodb
-        run: mongodb
+        app: postgres
+        run: postgres
     spec:
       containers:
-      - image: mongo:4.2.0-bionic
-        imagePullPolicy: Never
-        name: mongodb
+      - image: postgres:10.1
+        imagePullPolicy: "IfNotPresent"
+        name: postgres
         ports:
-        - containerPort: 27017
+        - containerPort: 5432
+        envFrom:
+        - configMapRef:
+            name: postgres-configmap
         volumeMounts:
-        - mountPath: /data/db
+        - mountPath: /var/lib/postgresql/data
           name: pv-db-storage
-        resources: 
+        resources:
           requests:
             memory: 512Mi
             cpu: 500m
@@ -39,5 +42,5 @@ spec:
       volumes:
       - name: pv-db-storage
         persistentVolumeClaim:
-          claimName: pv-db-claim
+          claimName: postgres-pv-db-claim
 status: {}

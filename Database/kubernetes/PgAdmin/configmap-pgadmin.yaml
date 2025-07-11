@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgadmin-configmap
+  namespace: ns
+data:
+  servers.json: |
+    {
+        "Servers": {
+          "1": {
+            "Name": "PostgreSQL 10.1",
+            "Group": "Servers",
+            "Port": 31587,
+            "Username": "admin",
+            "Host": "192.168.65.3",
+            "SSLMode": "prefer",
+            "MaintenanceDB": "postgres"
+          }
+        }
+    }
