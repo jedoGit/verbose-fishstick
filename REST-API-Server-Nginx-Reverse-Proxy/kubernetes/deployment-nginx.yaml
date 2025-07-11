@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: nginx
+    run: nginx
+  name: nginx
+  namespace: ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: nginx
+        run: nginx
+    spec:
+      containers:
+      - image: rest-api-nginx-rev-proxy:0.0.1
+        imagePullPolicy: Never
+        name: client
+        ports:
+        - name: https
+          containerPort: 443
+          protocol: TCP
+        resources: 
+          requests:
+            memory: 512Mi
+            cpu: 500m
+          limits:
+            memory: 1Gi
+            cpu: 1000m
+status: {}

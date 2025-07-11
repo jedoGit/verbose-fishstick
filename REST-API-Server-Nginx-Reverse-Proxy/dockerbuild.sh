@@ -1,0 +1,1 @@
+docker build . -t rest-api-nginx-rev-proxy:0.0.1
