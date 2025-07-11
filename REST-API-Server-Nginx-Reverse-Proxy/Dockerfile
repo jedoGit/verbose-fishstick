@@ -1,6 +1,6 @@
 FROM nginx:latest
 
-COPY Certificate/ /etc/nginx/ssl/
+COPY certificates/ /etc/nginx/ssl/
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
