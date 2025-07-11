@@ -23,7 +23,7 @@ spec:
       containers:
       - image: rest-api-nginx-rev-proxy:0.0.1
         imagePullPolicy: Never
-        name: client
+        name: nginx
         ports:
         - name: https
           containerPort: 443
